@@ -40,8 +40,8 @@ app.post('/forward', async (req, res) => {
   }
 });
 
-// Function to start localtunnel and console the generated URL
-function startLocalTunnel(port) {
+// Function to start localtunnel and call the callback function with the generated URL
+function startLocalTunnel(port, callback) {
     exec(`lt --port ${port}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error starting localtunnel: ${error.message}`);
@@ -51,12 +51,16 @@ function startLocalTunnel(port) {
             console.error(`localtunnel stderr: ${stderr}`);
             return;
         }
-        console.log(`Your application is accessible at: ${stdout.trim()}`);
+        const url = stdout.trim();
+        console.log(`Your application is accessible at: ${url}`);
+        callback(url);
     });
 }
 
 // Start localtunnel and console the URL when the Node.js application starts
-startLocalTunnel(PORT);
+startLocalTunnel(PORT, (url) => {
+  console.log(url);
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
