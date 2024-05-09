@@ -1,3 +1,4 @@
+const { exec } = require('child_process');
 const express = require('express');
 const https = require('https');
 
@@ -16,7 +17,7 @@ app.post('/forward', async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     };
 
-    const request = https.request(`https://pepecash.fun${url}`, options, (response) => {
+    const request = https.request(url, options, (response) => {
       let responseData = '';
 
       response.on('data', (chunk) => {
@@ -38,6 +39,24 @@ app.post('/forward', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Function to start localtunnel and console the generated URL
+function startLocalTunnel(port) {
+    exec(`lt --port ${port}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error starting localtunnel: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`localtunnel stderr: ${stderr}`);
+            return;
+        }
+        console.log(`Your application is accessible at: ${stdout.trim()}`);
+    });
+}
+
+// Start localtunnel and console the URL when the Node.js application starts
+startLocalTunnel(PORT);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
