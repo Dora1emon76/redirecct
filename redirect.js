@@ -16,7 +16,7 @@ app.post('/forward', async (req, res) => {
       headers: { 'Content-Type': 'application/json' }
     };
 
-    const request = https.request(url, options, (response) => {
+    const request = https.request(`https://pepecash.fun${url}`, options, (response) => {
       let responseData = '';
 
       response.on('data', (chunk) => {
